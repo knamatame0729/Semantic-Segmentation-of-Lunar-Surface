@@ -41,7 +41,7 @@ def predict_image(img_path, mask_path, model):
 
     return img, mask, pred_mask, iou
 
-image_ids = ["2047", "2048", "2049"]
+image_ids = ["2044", "2045", "2046"]
 
 img_path = os.path.expanduser("~/Lunar_Surface_Semantic_Segmentation/archive/images") # image
 mask_path = os.path.expanduser("~/Lunar_Surface_Semantic_Segmentation/archive/images") # mask
