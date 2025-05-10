@@ -1,0 +1,9 @@
+Leaderboard/
+LunarSimulator/
+docs/
+archive/
+docker/
+wheelhouse/
+results/
+scripts/model/
+*.h5

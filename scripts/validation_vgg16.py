@@ -5,18 +5,21 @@ import os
 import matplotlib
 import numpy as np
 from matplotlib import pyplot as plt
+from skimage.color import gray2rgb
 
 # Load Model
-model = load_model('models/LunarModel_2.h5')
+#model = load_model('models/LunarModel_2.h5')
+
+model = load_model('model/vgg16.h5')
 
 # Display
-# model.summary()
+model.summary()
 
 # function to predict result 
 def predict_image(img_path, mask_path, model):
     H = 480
     W = 480
-    num_classes = 4
+    num_classes = 6
 
     img = imread(img_path)
     img = img[:480, :480, :]
@@ -41,13 +44,14 @@ def predict_image(img_path, mask_path, model):
 
     return img, mask, pred_mask, iou
 
-image_ids = ["2044", "2045", "2046"]
+image_ids = ["08000", "01726", "01742"]
 
-img_path = os.path.expanduser("~/Lunar_Surface_Semantic_Segmentation/archive/images") # image
-mask_path = os.path.expanduser("~/Lunar_Surface_Semantic_Segmentation/archive/images") # mask
+img_path = os.path.expanduser("~/LunarAutonomyChallenge/archive") # image
+mask_path = os.path.expanduser("~/LunarAutonomyChallenge/archive") # mask
 
-img_paths = [os.path.join(img_path, "render", f"render{id}.png") for id in image_ids]
-mask_paths = [os.path.join(mask_path, "clean", f"clean{id}.png") for id in image_ids]
+img_paths = [os.path.join(img_path, "raw", f"raw_image_{id}.png") for id in image_ids]
+mask_paths = [os.path.join(mask_path, "semantic", f"semantic_image_{id}.png") for id in image_ids]
+
 
 fig, axes = plt.subplots(3, 3, figsize=(15, 15))
 

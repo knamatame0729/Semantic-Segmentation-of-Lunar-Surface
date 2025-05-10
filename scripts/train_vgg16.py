@@ -18,12 +18,12 @@ H = 480
 W = 480
 
 input_shape = (H, W, 3)
-n_classes = 4           # class (sky, ground, large rock and smaller rock)
+n_classes = 6           # class (sky, ground, large rock and smaller rock)
 
 """ High parameters """
 batch_size = 8  # Bath size
-lr = 1e-4       # learning rate
-epochs = 30     # Number of Epoch
+lr = 1e-5       # learning rate
+epochs = 50     # Number of Epoch
 
 # 1
 # function to load data and train test split
@@ -62,6 +62,14 @@ def preprocess(x, y):
         image = read_image(x)
         mask = read_mask(y)
         return image, mask
+
+    # Out put is image(float32) and maxk(int32)
+    image, mask = tf.numpy_function(f, [x, y], [tf.float32, tf.int32])
+    # Define the mask with 0 and 1
+    mask = tf.one_hot(mask, n_classes, dtype=tf.int32)
+    image.set_shape([H, W, 3])
+    mask.set_shape([H, W, n_classes])
+    return image, mask
     
 # 5
 # function to read image
@@ -80,26 +88,22 @@ def read_mask(x):
     # Normalize the mask 0~3 for one-hot encoding
     normalized = np.zeros_like(x, dtype=np.int32)
     normalized[x == 0] = 0
-    normalized[x == 29] = 1
-    normalized[x == 76] = 2
-    normalized[x == 149] = 3
+    normalized[x == 33] = 1
+    normalized[x == 71] = 2
+    normalized[x == 117] = 3
+    normalized[x == 162] = 4
+    normalized[x == 177] = 5
     x = cv2.resize(normalized, (W, H), interpolation=cv2.INTER_NEAREST)
     x = x.astype(np.int32)
     return x
 
-    # Out put is image(float32) and maxk(int32)
-    image, mask = tf.numpy_function(f, [x, y], [tf.float32, tf.int32])
-    # Define the mask with 0 and 1
-    mask = tf.one_hot(mask, 4, dtype=tf.int32)
-    image.set_shape([H, W, 3])
-    mask.set_shape([H, W, 4])
-    return image, mask
+    
 
+# Dataset directory
+IMG_DIR = os.path.expanduser("~/LunarAutonomyChallenge/archive/raw")
+MASK_DIR = os.path.expanduser("~/LunarAutonomyChallenge/archive/semantic")
 
-RENDER_IMAGE_DIR_PATH = os.path.expanduser("~/Lunar_Surface_Semantic_Segmentation/archive/images/render") # image
-GROUND_MASK_DIR_PATH = os.path.expanduser("~/Lunar_Surface_Semantic_Segmentation/archive/images/clean") # mask
-
-X_train, X_test, y_train, y_test = load_data(RENDER_IMAGE_DIR_PATH, GROUND_MASK_DIR_PATH)
+X_train, X_test, y_train, y_test = load_data(IMG_DIR, MASK_DIR)
 print(f"Dataset:\n Train: {len(X_train)} \n Test: {len(X_test)}")
 
 # calling tf_dataset
@@ -142,7 +146,11 @@ def create_unet(input_shape, n_classes):
 
     vgg16 = VGG16(include_top=False, weights='imagenet', input_shape=input_shape)
     # Fleeze the layers weight to use pre-trained weight
-    vgg16.trainable = False 
+    for layer in vgg16.layers:
+        if 'block4' in layer.name or 'block5' in layer.name:
+            layer.trainable = True
+        else:
+            layer.trainable = False
 
     # Take layers for skip connection
     s1 = vgg16.get_layer("block1_conv2").output  # (480, 480, 64)
@@ -194,7 +202,7 @@ ReduceLROnPlateau : The callback monitors a quantity and if no imporovement is s
 EarlyStopping     : Stop training when a monitored metric has stopped improving
 """
 callbacks = [
-    ModelCheckpoint(filepath=f'models/LunarModel_2.h5', monitor='val_loss', verbose=1, save_best_only=True),
+    ModelCheckpoint(filepath=f'model/vgg16_2.h5', monitor='val_loss', verbose=1, save_best_only=True),
     ReduceLROnPlateau(monitor="val_loss",factor=0.2, patience=5, verbose=1, min_lr=1e-6), # new_lr = lr * factor 
     EarlyStopping(monitor="val_loss", patience=7, verbose=1),
 ]
@@ -206,6 +214,7 @@ history = model.fit(train_dataset,
                          validation_steps=valid_steps,
                          callbacks=callbacks)
 
+# Plot train detail
 def plot_history(history):
     plt.figure(figsize=(12, 5))
 
