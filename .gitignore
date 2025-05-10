@@ -1,0 +1,8 @@
+LunarAutonomyChallenge/Leaderboard/
+LunarAutonomyChallenge/LunarSimulator/
+LunarAutonomyChallenge/docs/
+LunarAutonomyChallenge/archive/
+LunarAutonomyChallenge/docker/
+LunarAutonomyChallenge/wheelhouse/
+LunarAutonomyChallenge/results/
+*.h5
