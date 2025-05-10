@@ -10,7 +10,7 @@ I have done integrating semantic segmentation and ORB SLAM3 to overcome cons of 
 
 ## Demo Video  
 
-
+<video controls src="FinalProject_video.mp4" title="Title"></video>
 
 ## Introduction
 **ORBSLAM_Semantic_Mapping** is based on [ros2_orb_slam3](https://github.com/Mechazo11/ros2_orb_slam3). ORB SLAM3 is a great SLAM method that has been applied robot application. However, this method can not provide semantic information in environmental mapping. In this project, I present a method to build a 3D semantic map, which utilize both 2D semantic images from semantic segmentation model (U-Net with a VGG16 as encoder) and 3D ponit cloud map from ORB SLAM3.  
