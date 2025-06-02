@@ -1,0 +1,22 @@
+%YAML:1.0
+---
+camera_name: front_right
+image_width: 480
+image_height: 480
+camera_matrix:
+   rows: 3
+   cols: 3
+   data: [329.2, 0.0, 240.0, 0.0, 329.2, 240.0, 0.0, 0.0, 1.0]
+distortion_coefficients:
+   rows: 1
+   cols: 4
+   data: [0.0, 0.0, 0.0, 0.0]
+distortion_model: plumb_bob
+rectification_matrix:
+   rows: 3
+   cols: 3
+   data: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+projection_matrix:
+   rows: 3
+   cols: 4
+   data: [329.2, 0.0, 240.0, -53.3104, 0.0, 329.2, 240.0, 0.0, 0.0, 0.0, 1.0, 0.0]
