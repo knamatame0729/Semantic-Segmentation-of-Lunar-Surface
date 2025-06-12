@@ -100,8 +100,8 @@ def read_mask(x):
     
 
 # Dataset directory
-IMG_DIR = os.path.expanduser("~/LunarAutonomyChallenge/archive/raw")
-MASK_DIR = os.path.expanduser("~/LunarAutonomyChallenge/archive/semantic")
+IMG_DIR = os.path.expanduser("~/ORBSLAM_Semantic_Mapping/LunarAutonomyChallenge/archive/raw")
+MASK_DIR = os.path.expanduser("~/ORBSLAM_Semantic_Mapping/LunarAutonomyChallenge/archive/semantic")
 
 X_train, X_test, y_train, y_test = load_data(IMG_DIR, MASK_DIR)
 print(f"Dataset:\n Train: {len(X_train)} \n Test: {len(X_test)}")
