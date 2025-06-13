@@ -183,3 +183,59 @@ model = create_unet(input_shape, n_classes)
 # Display the model architecture
 model.summary()
 
+""" Compile the model with categorical crossentropy function and to optimizem, the Adam is utilieze"""
+model.compile(loss='categorical_crossentropy',
+                    optimizer=tf.keras.optimizers.Adam(learning_rate=lr, beta_1=0.9, beta_2=0.999, epsilon=1e-8, amsgrad=False, name='Adam'),
+                    metrics=['accuracy'])
+
+train_steps = len(X_train) // batch_size
+valid_steps = len(X_test) // batch_size
+
+current_datetime = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+"""
+ModelCheckpoint   : Save the best model to specific filepath
+ReduceLROnPlateau : The callback monitors a quantity and if no imporovement is seen for a 'patience' number of epochs, the learming rate is reduced.
+EarlyStopping     : Stop training when a monitored metric has stopped improving
+"""
+callbacks = [
+    ModelCheckpoint(filepath=f'model/vgg16_2.h5', monitor='val_loss', verbose=1, save_best_only=True),
+    ReduceLROnPlateau(monitor="val_loss",factor=0.2, patience=5, verbose=1, min_lr=1e-6), # new_lr = lr * factor 
+    EarlyStopping(monitor="val_loss", patience=7, verbose=1),
+]
+
+history = model.fit(train_dataset,
+                         epochs=epochs,
+                         steps_per_epoch=train_steps,
+                         validation_data=valid_dataset,
+                         validation_steps=valid_steps,
+                         callbacks=callbacks)
+
+# Plot train detail
+def plot_history(history):
+    plt.figure(figsize=(12, 5))
+
+    # Plot Loss
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history['loss'], label='Train Loss')
+    plt.plot(history.history['val_loss'], label='Validation Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.title('Loss over Epochs')
+    plt.legend()
+    plt.grid()
+
+    # Plot Accuracy
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history['accuracy'], label='Train Accuracy')
+    plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.title('Accuracy over Epochs')
+    plt.legend()
+    plt.grid()
+
+    plt.show()
+
+# plot
+plot_history(history)
