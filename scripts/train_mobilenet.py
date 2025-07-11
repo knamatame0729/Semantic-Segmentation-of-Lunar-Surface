@@ -181,9 +181,9 @@ def create_unet(input_shape, n_classes):
 # Call create_unet function
 model = create_unet(input_shape, n_classes)
 # Display the model architecture
-model.summary()
+#model.summary()
 
-""" Compile the model with categorical crossentropy function and to optimizem, the Adam is utilieze"""
+""" Compile the model with categorical crossentropy function and to optimizem, the Adam is utiliezed"""
 model.compile(loss='categorical_crossentropy',
                     optimizer=tf.keras.optimizers.Adam(learning_rate=lr, beta_1=0.9, beta_2=0.999, epsilon=1e-8, amsgrad=False, name='Adam'),
                     metrics=['accuracy'])
@@ -199,7 +199,7 @@ ReduceLROnPlateau : The callback monitors a quantity and if no imporovement is s
 EarlyStopping     : Stop training when a monitored metric has stopped improving
 """
 callbacks = [
-    ModelCheckpoint(filepath=f'model/vgg16_2.h5', monitor='val_loss', verbose=1, save_best_only=True),
+    ModelCheckpoint(filepath=f'model/mobilenet_1.h5', monitor='val_loss', verbose=1, save_best_only=True),
     ReduceLROnPlateau(monitor="val_loss",factor=0.2, patience=5, verbose=1, min_lr=1e-6), # new_lr = lr * factor 
     EarlyStopping(monitor="val_loss", patience=7, verbose=1),
 ]

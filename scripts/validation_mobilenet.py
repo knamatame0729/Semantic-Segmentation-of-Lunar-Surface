@@ -10,7 +10,7 @@ from skimage.color import gray2rgb
 # Load Model
 #model = load_model('models/LunarModel_2.h5')
 
-model = load_model('model/vgg16.h5')
+model = load_model('model/mobilenet_1.h5')
 
 # Display
 model.summary()
