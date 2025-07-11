@@ -7,6 +7,7 @@ import numpy as np
 import tensorflow as tf
 from sklearn.metrics import f1_score
 from std_msgs.msg import Float32
+import argparse
 
 """
 < This node subscribes image and publishes segmented images by using unet. >
@@ -19,11 +20,13 @@ from std_msgs.msg import Float32
 6. Publish both bgr image and mono image
 """
 class ImageSegmentationNode(Node):
-    def __init__(self):
+    def __init__(self, model_type='vgg16'):
         super().__init__('image_segmentation_node')
 
         # Load the model
-        self.model = tf.keras.models.load_model('model/vgg16.h5')
+        model_path = 'model/vgg16.h5' if model_type.lower() == 'vgg16' else 'model/mobilenet_1.h5'
+        self.model = tf.keras.models.load_model(model_path)
+        
         self.bridge = CvBridge()
 
         self.gt_mask = None
@@ -162,8 +165,13 @@ class ImageSegmentationNode(Node):
         
 
 def main(args=None):
-    rclpy.init(args=args)
-    node = ImageSegmentationNode()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model', default='vgg16', choices=['vgg16', 'mobilenet'])
+    args = parser.parse_args(rclpy.get_default_context().argv[1:])
+
+    rclpy.init(args=None)
+    node = ImageSegmentationNode(model_type=args.model)
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
