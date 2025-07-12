@@ -8,6 +8,7 @@ import tensorflow as tf
 from sklearn.metrics import f1_score
 from std_msgs.msg import Float32
 import argparse
+import sys
 
 """
 < This node subscribes image and publishes segmented images by using unet. >
@@ -26,7 +27,7 @@ class ImageSegmentationNode(Node):
         # Load the model
         model_path = 'model/vgg16.h5' if model_type.lower() == 'vgg16' else 'model/mobilenet_1.h5'
         self.model = tf.keras.models.load_model(model_path)
-        
+
         self.bridge = CvBridge()
 
         self.gt_mask = None
@@ -168,7 +169,7 @@ def main(args=None):
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', default='vgg16', choices=['vgg16', 'mobilenet'])
-    args = parser.parse_args(rclpy.get_default_context().argv[1:])
+    args = parser.parse_args(sys.argv[1:])
 
     rclpy.init(args=None)
     node = ImageSegmentationNode(model_type=args.model)
